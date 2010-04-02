@@ -17,7 +17,8 @@ setup(
     keywords = "buildout",
     author = "Doug Winter",
     author_email = "doug.winter@isotoma.com",
-    license="Apache Software License",
+    license = "Apache Software License",
+    url = "http://pypi.python.org/pypi/isotoma.recipe.portmap",
     packages = find_packages(exclude=['ez_setup']),
     package_data = {
         '': ['README.rst', 'CHANGES.txt'],
