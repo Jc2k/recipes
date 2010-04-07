@@ -1,30 +1,28 @@
 from setuptools import setup, find_packages
 
-version = '0.0.9'
+version = '0.0.8'
 
 setup(
-    name = 'isotoma.recipe.apache',
+    name = 'isotoma.recipe.pound',
     version = version,
-    description = "Buildout recipes for apache.",
-    url = "http://pypi.python.org/pypi/isotoma.recipe.apache",
-    project_url = "http://github.com/isotoma/recipes",
+    description = "Buildout recipes to configure the pound load balancer",
     long_description = open("README.rst").read() + "\n" + \
                        open("CHANGES.txt").read(),
+    url = "http://pypi.python.org/pypi/isotoma.recipe.pound",
     classifiers = [
         "Framework :: Buildout",
         "Intended Audience :: System Administrators",
         "Operating System :: POSIX",
         "License :: OSI Approved :: Apache Software License",
-
     ],
-    keywords = "proxy buildout apache",
+    keywords = "proxy buildout pound",
     author = "Doug Winter",
     author_email = "doug.winter@isotoma.com",
     license="Apache Software License",
     packages = find_packages(exclude=['ez_setup']),
     package_data = {
         '': ['README.rst', 'CHANGES.txt'],
-        'isotoma.recipe.apache': ['apache.cfg', 'apache-ssl.cfg']
+        'isotoma.recipe.pound': ['pound.cfg', 'apache.conf']
     },
     namespace_packages = ['isotoma', 'isotoma.recipe'],
     include_package_data = True,
@@ -37,7 +35,8 @@ setup(
     ],
     entry_points = {
         "zc.buildout": [
-            "default = isotoma.recipe.apache:Apache",
+            "default = isotoma.recipe.pound:Pound",
+            "emergency = isotoma.recipe.pound.emergency:Emergency",
         ],
     }
 )

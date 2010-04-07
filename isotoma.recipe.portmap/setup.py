@@ -1,13 +1,11 @@
 from setuptools import setup, find_packages
 
-version = '0.0.9'
+version = '0.0.0'
 
 setup(
-    name = 'isotoma.recipe.apache',
+    name = 'isotoma.recipe.portmap',
     version = version,
-    description = "Buildout recipes for apache.",
-    url = "http://pypi.python.org/pypi/isotoma.recipe.apache",
-    project_url = "http://github.com/isotoma/recipes",
+    description = "Simple way of configuring port numbers as offsets from a base, for use in buildout scripts.",
     long_description = open("README.rst").read() + "\n" + \
                        open("CHANGES.txt").read(),
     classifiers = [
@@ -15,16 +13,15 @@ setup(
         "Intended Audience :: System Administrators",
         "Operating System :: POSIX",
         "License :: OSI Approved :: Apache Software License",
-
     ],
-    keywords = "proxy buildout apache",
+    keywords = "buildout",
     author = "Doug Winter",
     author_email = "doug.winter@isotoma.com",
-    license="Apache Software License",
+    license = "Apache Software License",
+    url = "http://pypi.python.org/pypi/isotoma.recipe.portmap",
     packages = find_packages(exclude=['ez_setup']),
     package_data = {
         '': ['README.rst', 'CHANGES.txt'],
-        'isotoma.recipe.apache': ['apache.cfg', 'apache-ssl.cfg']
     },
     namespace_packages = ['isotoma', 'isotoma.recipe'],
     include_package_data = True,
@@ -32,12 +29,10 @@ setup(
     install_requires = [
         'setuptools',
         'zc.buildout',
-        'Cheetah',
-        'isotoma.recipe.gocaptain',
     ],
     entry_points = {
         "zc.buildout": [
-            "default = isotoma.recipe.apache:Apache",
+            "default = isotoma.recipe.portmap:Portmap",
         ],
     }
 )
