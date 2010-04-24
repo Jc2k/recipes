@@ -20,7 +20,7 @@ def system(c):
     if os.system(c):
         raise SystemError("Failed", c)
 
-class Site(object):
+class Recipe(object):
     """zc.buildout recipe"""
 
     def __init__(self, buildout, name, options):
