@@ -231,7 +231,7 @@ class Properties(Recipe):
 
         return "%(scriptname)s %(arg)s" % {
             "scriptname": self.get_internal_script("setproperties.py"),
-            "args": "--properties=%s" % location)
+            "args": "--site-id=%s --properties=%s" % (self.options['site-id'], location)
             }
 
 
