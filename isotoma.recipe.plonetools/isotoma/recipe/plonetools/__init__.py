@@ -179,6 +179,18 @@ class Properties(Recipe):
 
 class Script(Recipe):
 
+    BLOCKED = ['recipe', 'script']
+
     def get_command(self):
-        raise NotImplementedError
+        args = []
+        for key, value in self.options.iteritems():
+            if key.startswith("_") or key in BLOCKED:
+                continue
+            args.append("--%s=%s" % (key, value)
+
+        return "%(scriptname)s %(args)s" % {
+            "scriptname": self.options['script'],
+            "args": " ".join(args)
+            }
+
 
