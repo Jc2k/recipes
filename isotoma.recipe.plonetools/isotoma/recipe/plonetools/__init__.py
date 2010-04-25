@@ -32,6 +32,7 @@ class Recipe(object):
             self.name,
             )
 
+        self.installed = []
         self.stop_zeo = False
         self.bin_directory = buildout['buildout']['bin-directory']
 
@@ -96,7 +97,7 @@ class Recipe(object):
         """
         options = self.options
         # XXX is this needed?
-        location = options['location']
+        self.installed.append(options['location'])
         if self.enabled:
 
             if not self.is_zeo_started() and self.zeoserver:
@@ -121,7 +122,7 @@ class Recipe(object):
                     zeo_stop = "%s stop" % self.zeo_script
                     subprocess.call(zeo_stop.split())
 
-        return location
+        return self.installed
 
     def get_internal_script(self, scriptname):
         return pkg_resources.resource_filename(__name__, scriptname)
@@ -143,6 +144,8 @@ class Site(Recipe):
         after_install = self.options.get("after-install", None)
         if after_install:
             system(after_install)
+
+        return self.installed
 
     def get_command(self):
         o = self.options.get
@@ -212,7 +215,7 @@ class Properties(Recipe):
     portal properties.
     """
 
-    BLOCKED = ['recipe', 'script', 'site-id']
+    BLOCKED = ['recipe', 'script', 'instance', 'zeoserver', 'zeo-pid-file', 'location', 'site-id']
 
     def get_command(self):
         location = os.path.join(self.buildout['buildout']['parts-directory'], self.name)
@@ -221,15 +224,16 @@ class Properties(Recipe):
         location = os.path.join(location, "properties.cfg")
 
         args = {}
-        for key, value in self.options.iteritmes():
+        for key, value in self.options.iteritems():
             if key.startswith("_") or key in self.BLOCKED:
-                args[key] = value
+                continue
+            args[key] = value
         cfg = json.dumps(args)
 
         open(location, "w").write(cfg)
         self.installed.append(location)
 
-        return "%(scriptname)s %(arg)s" % {
+        return "%(scriptname)s %(args)s" % {
             "scriptname": self.get_internal_script("setproperties.py"),
             "args": "--site-id=%s --properties=%s" % (self.options['site-id'], location)
             }
@@ -243,17 +247,17 @@ class Script(Recipe):
     Every other parameter is passed to the script in the form --key=val
     """
 
-    BLOCKED = ['recipe', 'script']
+    BLOCKED = ['recipe', 'script', 'instance', 'zeoserver', 'zeo-pid-file', 'location']
 
     def get_command(self):
         args = []
         for key, value in self.options.iteritems():
-            if key.startswith("_") or key in BLOCKED:
+            if key.startswith("_") or key in self.BLOCKED:
                 continue
             if isinstance(value, list):
                 for v in value:
-                    args.append("--%s=%s" % (key, value)
-            args.append("--%s=%s" % (key, value)
+                    args.append("--%s=%s" % (key, value))
+            args.append("--%s=%s" % (key, value))
 
         return "%(scriptname)s %(args)s" % {
             "scriptname": self.options['script'],

@@ -10,21 +10,21 @@ import optparse, transaction
 import simplejson as json
 
 typemap = {
-    "unicode": "string",
+    "str": "string",
     "int": "int",
     "bool": "boolean",
     "list": "lines",
 }
 
-parser = optparser.OptionParser()
-parser.add_option("-p", "--properties", store="properties")
-parser.add_option("-s", "--site-id", store="site_id")
+parser = optparse.OptionParser()
+parser.add_option("-p", "--properties", dest="properties")
+parser.add_option("-s", "--site-id", dest="site_id")
 options, args = parser.parse_args()
 
 portal = app[options.site_id]
 
 properties = json.loads(open(options.properties).read())
-for key, value in properties:
+for key, value in properties.iteritems():
     # What kind of thing is this? We only support those in typemap
     typename = value.__class__.__name__
     if not typename in typemap.keys():
@@ -34,7 +34,9 @@ for key, value in properties:
 
     print "Setting %s to '%s'" % (key, value)
 
-    # Set it
-    portal[key] = value
+    if not portal.hasProperty(key):
+        portal.manage_addProperty(key, value, typename)
+    else:
+        portal.manage_changeProperties(**{key: value})
 
 transaction.commit()
