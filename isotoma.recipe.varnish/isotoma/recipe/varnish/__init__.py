@@ -29,6 +29,7 @@ import os
 import shutil
 import sys
 import sets
+from stat import S_IXUSR, S_IXGRP, S_IXOTH
 
 try:
     from hashlib import sha1
@@ -81,6 +82,7 @@ class Varnish(object):
         self.create_config()
         if "varnishlog" in self.options:
             self.add_log()
+        self.create_varnishadm()
         return self.options.created()
 
     def update(self):
@@ -173,3 +175,13 @@ class Varnish(object):
         c = Template(open(template).read(), searchList=vars)
         open(config, "w").write(str(c))
         self.options.created(self.options["config"])
+
+    def create_varnishadm(self):
+        path = os.path.join(self.buildout['buildout']['bin-directory'], "%sadm" % self.name)
+        template = '#! /bin/sh\n/usr/bin/varnishadm -T %s "$@"' % self.options["bind"]
+        open(path, "w").write(path)
+        # Make script executeable, don't mess with existing permissions
+        os.chmod(path, os.stat(path)[0] | S_IXUSR | S_IXGRP | S_IXOTH)
+        self.options.create(path)
+
+
